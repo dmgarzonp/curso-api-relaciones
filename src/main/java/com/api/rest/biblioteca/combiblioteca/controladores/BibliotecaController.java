@@ -5,9 +5,12 @@ import java.util.Optional;
 
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,6 +28,11 @@ public class BibliotecaController {
 
     @Autowired
     private BibliotecaRepository bibliotecaRepository;
+
+    @GetMapping
+    public ResponseEntity<Page<Biblioteca>> listarBibliotecas(Pageable pageable) {
+        return ResponseEntity.ok(bibliotecaRepository.findAll(pageable));
+    }
 
     @PostMapping
     public ResponseEntity<Biblioteca> guardarBiblioteca(@Validated @RequestBody Biblioteca biblioteca) {
@@ -62,4 +70,13 @@ public class BibliotecaController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Biblioteca> obtenerBibliotecaPorId(@PathVariable Integer id) {
+        Optional<Biblioteca> bibliotecaOptional = bibliotecaRepository.findById(id);
+        if (!bibliotecaOptional.isPresent()) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+
+        return ResponseEntity.ok(bibliotecaOptional.get());
+    }
 }
