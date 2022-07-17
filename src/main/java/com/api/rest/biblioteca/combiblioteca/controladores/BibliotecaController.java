@@ -3,12 +3,12 @@ package com.api.rest.biblioteca.combiblioteca.controladores;
 import java.net.URI;
 import java.util.Optional;
 
-import org.apache.catalina.connector.Response;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +35,7 @@ public class BibliotecaController {
     }
 
     @PostMapping
-    public ResponseEntity<Biblioteca> guardarBiblioteca(@Validated @RequestBody Biblioteca biblioteca) {
+    public ResponseEntity<Biblioteca> guardarBiblioteca(@Valid @RequestBody Biblioteca biblioteca) {
         Biblioteca bibliotecaGuardada = bibliotecaRepository.save(biblioteca);
         URI ublicacion = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(bibliotecaGuardada.getId()).toUri();
@@ -45,7 +45,7 @@ public class BibliotecaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Biblioteca> editarBiblioteca(@PathVariable Integer id,
-            @Validated @RequestBody Biblioteca biblioteca) {
+            @Valid @RequestBody Biblioteca biblioteca) {
         Optional<Biblioteca> bibliotecaOptional = bibliotecaRepository.findById(id);
         if (!bibliotecaOptional.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
@@ -59,8 +59,7 @@ public class BibliotecaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Biblioteca> eliminarBiblioteca(@PathVariable Integer id,
-            @Validated @RequestBody Biblioteca biblioteca) {
+    public ResponseEntity<Biblioteca> eliminarBiblioteca(@PathVariable Integer id ) {
         Optional<Biblioteca> bibliotecaOptional = bibliotecaRepository.findById(id);
         if (!bibliotecaOptional.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
